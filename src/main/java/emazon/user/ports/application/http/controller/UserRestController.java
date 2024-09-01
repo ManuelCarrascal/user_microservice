@@ -27,10 +27,10 @@ public class UserRestController {
     private final IRoleServicePort roleServicePort;
 
     @PostMapping
-    public ResponseEntity<UserResponse> saveUser(@RequestBody UserRequest userRequest) {
+    public ResponseEntity<UserResponse> saveWarehouseAsstUser(@RequestBody UserRequest userRequest) {
         User user = userRequestMapper.userRequestToUser(userRequest);
         user.setRoleId(roleServicePort.getRoleId(RoleConstants.AUX_BODEGA.name()));
-        userServicePort.saveUser(user);
+        userServicePort.saveWarehouseAsstUser(user);
         UserResponse userResponse = userResponseMapper.userToUserResponse(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(userResponse);
     }

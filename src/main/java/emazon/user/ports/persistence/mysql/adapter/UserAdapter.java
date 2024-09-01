@@ -12,7 +12,7 @@ public class UserAdapter implements IUserPersistencePort {
     private final IUserEntityMapper userEntityMapper;
 
     @Override
-    public void saveUser(User user) {
+    public void saveWarehouseAsstUser(User user) {
         userRepository.save(userEntityMapper.toEntity(user));
     }
 

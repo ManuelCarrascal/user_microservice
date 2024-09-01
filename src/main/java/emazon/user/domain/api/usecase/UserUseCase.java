@@ -15,13 +15,13 @@ public class UserUseCase implements IUserServicePort {
         this.userPersistencePort = userPersistencePort;
     }
 
-    public void saveUser(User user) {
+    public void saveWarehouseAsstUser(User user) {
         if(userPersistencePort.existsByEmail(user.getUserEmail())) {
             throw new EntityAlreadyExistsException(EntityConstants.USER_ENTITY_NAME);
         }
         userValidation.validate(user);
 
-        userPersistencePort.saveUser(user);
+        userPersistencePort.saveWarehouseAsstUser(user);
     }
 
 }
