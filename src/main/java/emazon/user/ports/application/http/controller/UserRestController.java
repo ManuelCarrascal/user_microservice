@@ -11,6 +11,7 @@ import emazon.user.ports.application.http.mapper.IUserResponseMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1/users")
+
 @RequiredArgsConstructor
 
 public class UserRestController {
@@ -27,6 +29,7 @@ public class UserRestController {
     private final IRoleServicePort roleServicePort;
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UserResponse> saveWarehouseAsstUser(@RequestBody UserRequest userRequest) {
         User user = userRequestMapper.userRequestToUser(userRequest);
         user.setRoleId(roleServicePort.getRoleId(RoleConstants.AUX_BODEGA.name()));

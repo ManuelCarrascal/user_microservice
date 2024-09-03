@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Entity
@@ -15,7 +16,7 @@ import java.util.List;
 @Getter
 @Setter
 @Table(name = RoleEntityConstants.TABLE_NAME)
-public class RoleEntity {
+public class RoleEntity  implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = RoleEntityConstants.COLUMN_ROLE_ID)

@@ -3,7 +3,7 @@ package emazon.user.domain.model;
 import java.time.LocalDate;
 
 public class User {
-    private  Long userId;
+    private Long userId;
     private String userName;
     private String userLastName;
     private String userIdentityDocument;
@@ -14,20 +14,83 @@ public class User {
     private Long roleId;
 
     public User() {
+        // No-argument constructor
     }
 
-    public User(Long userId, String userName, String userLastName, String userIdentityDocument, String userPhone, String userEmail, String userPassword, LocalDate userBirthdate, Long roleId) {
-        this.userId = userId;
-        this.userName = userName;
-        this.userLastName = userLastName;
-        this.userIdentityDocument = userIdentityDocument;
-        this.userPhone = userPhone;
-        this.userEmail = userEmail;
-        this.userPassword = userPassword;
-        this.userBirthdate = userBirthdate;
-        this.roleId = roleId;
+    private User(Builder builder) {
+        this.userId = builder.userId;
+        this.userName = builder.userName;
+        this.userLastName = builder.userLastName;
+        this.userIdentityDocument = builder.userIdentityDocument;
+        this.userPhone = builder.userPhone;
+        this.userEmail = builder.userEmail;
+        this.userPassword = builder.userPassword;
+        this.userBirthdate = builder.userBirthdate;
+        this.roleId = builder.roleId;
     }
 
+    public static class Builder {
+        private Long userId;
+        private String userName;
+        private String userLastName;
+        private String userIdentityDocument;
+        private String userPhone;
+        private String userEmail;
+        private String userPassword;
+        private LocalDate userBirthdate;
+        private Long roleId;
+
+        public Builder userId(Long userId) {
+            this.userId = userId;
+            return this;
+        }
+
+        public Builder userName(String userName) {
+            this.userName = userName;
+            return this;
+        }
+
+        public Builder userLastName(String userLastName) {
+            this.userLastName = userLastName;
+            return this;
+        }
+
+        public Builder userIdentityDocument(String userIdentityDocument) {
+            this.userIdentityDocument = userIdentityDocument;
+            return this;
+        }
+
+        public Builder userPhone(String userPhone) {
+            this.userPhone = userPhone;
+            return this;
+        }
+
+        public Builder userEmail(String userEmail) {
+            this.userEmail = userEmail;
+            return this;
+        }
+
+        public Builder userPassword(String userPassword) {
+            this.userPassword = userPassword;
+            return this;
+        }
+
+        public Builder userBirthdate(LocalDate userBirthdate) {
+            this.userBirthdate = userBirthdate;
+            return this;
+        }
+
+        public Builder roleId(Long roleId) {
+            this.roleId = roleId;
+            return this;
+        }
+
+        public User build() {
+            return new User(this);
+        }
+    }
+
+    // Getters and setters
     public Long getUserId() {
         return userId;
     }
