@@ -36,13 +36,11 @@ public class SecurityConfig {
 
     @Bean
     public UserDetailsService userDetailsService() {
-        return username -> userRepository.findByUserEmail(username)
-                .orElseThrow(() -> new RuntimeException("User not found: " + username));
+        return new CustomUserDetailsService(userRepository);
     }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
-
     }
 }

@@ -6,8 +6,9 @@ import emazon.user.domain.api.usecase.RoleUseCase;
 import emazon.user.domain.api.usecase.UserUseCase;
 import emazon.user.domain.spi.IRolePersistencePort;
 import emazon.user.domain.spi.IUserPersistencePort;
-import emazon.user.domain.util.EncryptionService;
-import emazon.user.infrastructure.configuration.BCryptEncryptionService;
+import emazon.user.domain.api.IEncryptionService;
+import emazon.user.domain.util.UserValidation;
+import emazon.user.infrastructure.configuration.BCryptIEncryptionService;
 import emazon.user.ports.persistence.mysql.adapter.RoleAdapter;
 import emazon.user.ports.persistence.mysql.adapter.UserAdapter;
 import emazon.user.ports.persistence.mysql.mapper.IUserEntityMapper;
@@ -29,13 +30,18 @@ public class BeanConfiguration {
         return new UserAdapter(userRepository, userEntityMapper);
     }
     @Bean
-    public EncryptionService encryptionService() {
-        return new BCryptEncryptionService();
+    public IEncryptionService encryptionService() {
+        return new BCryptIEncryptionService();
+    }
+
+    @Bean
+    public UserValidation userValidation() {
+        return new UserValidation();
     }
 
     @Bean
     public IUserServicePort userServicePort(){
-        return new UserUseCase(userPersistencePort(), encryptionService());
+        return new UserUseCase(userPersistencePort(),userValidation(), encryptionService());
     }
 
     @Bean

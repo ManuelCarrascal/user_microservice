@@ -8,6 +8,9 @@ import emazon.user.ports.application.http.dto.UserRequest;
 import emazon.user.ports.application.http.dto.UserResponse;
 import emazon.user.ports.application.http.mapper.IUserRequestMapper;
 import emazon.user.ports.application.http.mapper.IUserResponseMapper;
+import emazon.user.ports.application.http.util.openapi.controller.UserRestControllerConstants;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,17 +22,17 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1/users")
-
 @RequiredArgsConstructor
-
+@Tag(name = UserRestControllerConstants.TAG_NAME, description = UserRestControllerConstants.TAG_DESCRIPTION)
 public class UserRestController {
     private final IUserServicePort userServicePort;
     private final IUserRequestMapper userRequestMapper;
     private final IUserResponseMapper userResponseMapper;
     private final IRoleServicePort roleServicePort;
 
-    @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/warehouse-asst")
+    @PreAuthorize(UserRestControllerConstants.HAS_ROLE_ADMIN)
+    @Operation(summary = UserRestControllerConstants.OPERATION_SUMMARY)
     public ResponseEntity<UserResponse> saveWarehouseAsstUser(@RequestBody UserRequest userRequest) {
         User user = userRequestMapper.userRequestToUser(userRequest);
         user.setRoleId(roleServicePort.getRoleId(RoleConstants.AUX_BODEGA.name()));

@@ -4,6 +4,7 @@ import emazon.user.domain.exception.*;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -40,4 +41,14 @@ public class HandlerControllerAdvisor {
     public String handleAgeValidationException(AgeValidationException ex) {
         return ex.getMessage();
     }
+
+    @ExceptionHandler(JwtAuthenticationException.class)
+    public ResponseEntity<String> handleJwtAuthenticationException(JwtAuthenticationException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.UNAUTHORIZED);
+    }
+    @ExceptionHandler(AuthenticationFailureException.class)
+    public ResponseEntity<String> handleAuthenticationFailureException(AuthenticationFailureException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.FORBIDDEN);
+    }
+
 }

@@ -1,13 +1,13 @@
 package emazon.user.infrastructure.configuration;
 
-import emazon.user.domain.util.EncryptionService;
+import emazon.user.domain.api.IEncryptionService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-public class BCryptEncryptionService implements EncryptionService {
+public class BCryptIEncryptionService implements IEncryptionService {
     private final PasswordEncoder passwordEncoder;
 
-    public BCryptEncryptionService() {
+    public BCryptIEncryptionService() {
         this.passwordEncoder = new BCryptPasswordEncoder();
     }
 
@@ -16,8 +16,5 @@ public class BCryptEncryptionService implements EncryptionService {
         return passwordEncoder.encode(rawPassword);
     }
 
-    @Override
-    public boolean matches(String rawPassword, String encodedPassword) {
-        return passwordEncoder.matches(rawPassword, encodedPassword);
-    }
+
 }

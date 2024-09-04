@@ -4,17 +4,18 @@ import emazon.user.domain.api.IUserServicePort;
 import emazon.user.domain.model.User;
 import emazon.user.domain.spi.IUserPersistencePort;
 import emazon.user.domain.exception.EntityAlreadyExistsException;
-import emazon.user.domain.util.EncryptionService;
+import emazon.user.domain.api.IEncryptionService;
 import emazon.user.domain.util.EntityConstants;
 import emazon.user.domain.util.UserValidation;
 
 public class UserUseCase implements IUserServicePort {
     private final IUserPersistencePort userPersistencePort;
-    private final UserValidation userValidation = new UserValidation();
-    private final EncryptionService encryptionService;
+    private final UserValidation userValidation;
+    private final IEncryptionService encryptionService;
 
-    public UserUseCase(IUserPersistencePort userPersistencePort, EncryptionService encryptionService) {
+    public UserUseCase(IUserPersistencePort userPersistencePort, UserValidation userValidation, IEncryptionService encryptionService) {
         this.userPersistencePort = userPersistencePort;
+        this.userValidation = userValidation;
         this.encryptionService = encryptionService;
     }
 

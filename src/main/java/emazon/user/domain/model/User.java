@@ -14,7 +14,6 @@ public class User {
     private Long roleId;
 
     public User() {
-        // No-argument constructor
     }
 
     private User(Builder builder) {
@@ -90,7 +89,6 @@ public class User {
         }
     }
 
-    // Getters and setters
     public Long getUserId() {
         return userId;
     }
