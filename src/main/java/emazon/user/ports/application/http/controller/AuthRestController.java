@@ -6,6 +6,7 @@ import emazon.user.ports.application.http.dto.AuthenticationResponse;
 import emazon.user.ports.application.http.util.openapi.controller.AuthRestControllerConstants;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,7 +24,7 @@ public class AuthRestController {
 
 @PostMapping("/login")
 @Operation(summary = AuthRestControllerConstants.OPERATION_SUMMARY)
-    public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request) {
+    public ResponseEntity<AuthenticationResponse> authenticate(@Valid @RequestBody AuthenticationRequest request) {
     AuthenticationResponse response = authenticationService.authenticate(request);
     return ResponseEntity.ok(response);
 }

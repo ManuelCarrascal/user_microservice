@@ -1,17 +1,32 @@
 package emazon.user.infrastructure.configuration.exceptionhandler;
 
 import emazon.user.domain.exception.*;
+import org.springframework.context.MessageSourceResolvable;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.List;
+import java.util.Map;
+
 @RestControllerAdvice
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class HandlerControllerAdvisor {
+
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Map<String, List<String>>> methodArgumentNotValidException(MethodArgumentNotValidException ex) {
+        List<String> errors = ex.getAllErrors().stream()
+                .map(MessageSourceResolvable::getDefaultMessage)
+                .toList();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", errors));
+    }
+
     @ExceptionHandler(EntityAlreadyExistsException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
     public String handleEntityAlreadyExistsException(EntityAlreadyExistsException ex) {
@@ -42,13 +57,5 @@ public class HandlerControllerAdvisor {
         return ex.getMessage();
     }
 
-    @ExceptionHandler(JwtAuthenticationException.class)
-    public ResponseEntity<String> handleJwtAuthenticationException(JwtAuthenticationException ex) {
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.UNAUTHORIZED);
-    }
-    @ExceptionHandler(AuthenticationFailureException.class)
-    public ResponseEntity<String> handleAuthenticationFailureException(AuthenticationFailureException ex) {
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.FORBIDDEN);
-    }
 
 }

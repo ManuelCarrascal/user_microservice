@@ -1,6 +1,6 @@
 package emazon.user.infrastructure.configuration.security;
 
-import emazon.user.infrastructure.configuration.security.jwtconfiguration.JwtAuthenticationFilter;
+import emazon.user.infrastructure.configuration.security.filter.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,16 +22,17 @@ public class FilterConfig {
     private final JwtAuthenticationFilter jwtAuthFilter;
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         return http
                 .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(authorize -> authorize
-                        .anyRequest().permitAll()
-                )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)                )
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                .authorizeHttpRequests(authorize -> authorize
+                        .anyRequest().permitAll()
+                )
+
                 .build();
     }
 

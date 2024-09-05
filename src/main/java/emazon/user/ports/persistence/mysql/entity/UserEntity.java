@@ -5,9 +5,13 @@ import emazon.user.ports.persistence.mysql.util.openapi.UserEntityOpenApiConstan
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
-import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.Collection;
+import java.util.Set;
 
 @Entity
 @Builder
@@ -17,7 +21,7 @@ import java.time.LocalDate;
 @Setter
 @Table(name = UserEntityConstants.TABLE_NAME)
 @Schema(description = UserEntityOpenApiConstants.USER_ENTITY_DESCRIPTION)
-public class UserEntity implements Serializable {
+public class UserEntity implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = UserEntityConstants.COLUMN_USER_ID)
@@ -56,4 +60,41 @@ public class UserEntity implements Serializable {
     @JoinColumn(name = UserEntityConstants.COLUMN_ROLE_ID)
     @Schema(description = UserEntityOpenApiConstants.USER_ROLE_DESCRIPTION)
     private RoleEntity role;
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return Set.of(new SimpleGrantedAuthority("ROLE_" + role.getRoleName()));
+
+    }
+
+    @Override
+    public String getPassword() {
+        return userPassword;
+    }
+
+    @Override
+    public String getUsername() {
+        return userEmail;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return UserDetails.super.isAccountNonExpired();
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return UserDetails.super.isAccountNonLocked();
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return UserDetails.super.isCredentialsNonExpired();
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return UserDetails.super.isEnabled();
+    }
+
 }

@@ -3,15 +3,15 @@ package emazon.user.infrastructure.configuration.security;
 import emazon.user.infrastructure.configuration.security.jwtconfiguration.JwtService;
 import emazon.user.ports.application.http.dto.AuthenticationRequest;
 import emazon.user.ports.application.http.dto.AuthenticationResponse;
+import emazon.user.ports.persistence.mysql.entity.UserEntity;
 import emazon.user.ports.persistence.mysql.repository.IUserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-import emazon.user.domain.exception.AuthenticationFailureException;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -20,27 +20,25 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
     private final IUserRepository userRepository;
 
-    public AuthenticationResponse authenticate(AuthenticationRequest request) {
-        try {
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(
-                            request.getUserEmail(),
-                            request.getUserPassword()
-                    )
-            );
+    public AuthenticationResponse authenticate(AuthenticationRequest authRequest) {
 
-            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-            Long userId = userRepository.findByUserEmail(request.getUserEmail())
-                    .orElseThrow(() -> new IllegalArgumentException("User not found"))
-                    .getUserId();
+        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                authRequest.getUserEmail(), authRequest.getUserPassword()
+        );
 
-            String jwtToken = jwtService.generateToken(userDetails, userId);
+        authenticationManager.authenticate(authToken);
 
-            return AuthenticationResponse.builder()
-                    .token(jwtToken)
-                    .build();
-        } catch (AuthenticationException e) {
-            throw new AuthenticationFailureException("Invalid credentials");
-        }
+        UserEntity user = userRepository.findByUserEmail(authRequest.getUserEmail()).orElseThrow(()-> new RuntimeException("User not found"));
+
+        String jwt = jwtService.generateToken(user, generateExtraClaims(user));
+
+        return new AuthenticationResponse(jwt);
+
+    }
+
+    private Map<String, Object> generateExtraClaims(UserEntity user) {
+      Map<String, Object> extraClaims = new HashMap<>();
+      extraClaims.put("authorities",user.getAuthorities());
+      return extraClaims;
     }
 }
