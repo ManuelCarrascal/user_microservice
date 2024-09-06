@@ -4,10 +4,10 @@ import emazon.user.domain.api.IEncryptionService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-public class BCryptIEncryptionService implements IEncryptionService {
+public class BCryptIEncryptionHandler implements IEncryptionService {
     private final PasswordEncoder passwordEncoder;
 
-    public BCryptIEncryptionService() {
+    public BCryptIEncryptionHandler() {
         this.passwordEncoder = new BCryptPasswordEncoder();
     }
 
@@ -15,6 +15,5 @@ public class BCryptIEncryptionService implements IEncryptionService {
     public String encodePassword(String rawPassword) {
         return passwordEncoder.encode(rawPassword);
     }
-
 
 }

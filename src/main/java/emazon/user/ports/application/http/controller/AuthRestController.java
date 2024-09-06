@@ -1,6 +1,6 @@
 package emazon.user.ports.application.http.controller;
 
-import emazon.user.infrastructure.configuration.security.AuthenticationService;
+import emazon.user.domain.api.IAuthServicePort;
 import emazon.user.ports.application.http.dto.AuthenticationRequest;
 import emazon.user.ports.application.http.dto.AuthenticationResponse;
 import emazon.user.ports.application.http.util.openapi.controller.AuthRestControllerConstants;
@@ -20,12 +20,13 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = AuthRestControllerConstants.TAG_NAME, description = AuthRestControllerConstants.TAG_DESCRIPTION)
 public class AuthRestController {
 
-    private final AuthenticationService authenticationService;
+    private final IAuthServicePort authServicePort;
 
 @PostMapping("/login")
 @Operation(summary = AuthRestControllerConstants.OPERATION_SUMMARY)
     public ResponseEntity<AuthenticationResponse> authenticate(@Valid @RequestBody AuthenticationRequest request) {
-    AuthenticationResponse response = authenticationService.authenticate(request);
+    String token =authServicePort.login(request.getUserEmail(), request.getUserPassword());
+    AuthenticationResponse response = new AuthenticationResponse(token);
     return ResponseEntity.ok(response);
 }
 

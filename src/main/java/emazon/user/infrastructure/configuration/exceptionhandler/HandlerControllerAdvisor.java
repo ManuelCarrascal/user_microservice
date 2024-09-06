@@ -58,4 +58,16 @@ public class HandlerControllerAdvisor {
     }
 
 
+    @ExceptionHandler(AuthenticationException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public String handleAuthenticationException(AuthenticationException ex) {
+        return ex.getMessage();
+    }
+
+    @ExceptionHandler(InvalidRoleException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public String handleInvalidRoleException(InvalidRoleException ex) {
+        return ex.getMessage();
+    }
 }
+

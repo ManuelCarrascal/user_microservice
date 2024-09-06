@@ -1,25 +1,27 @@
 package emazon.user.domain.api.usecase;
 
 import emazon.user.domain.api.IAuthServicePort;
-import emazon.user.domain.api.IEncryptionService;
 import emazon.user.domain.exception.AuthenticationException;
 import emazon.user.domain.model.User;
-import emazon.user.domain.spi.IUserPersistencePort;
-import emazon.user.infrastructure.configuration.security.jwtconfiguration.JwtService;
+import emazon.user.domain.spi.IAuthPersistencePort;
+
 
 public class AuthUseCase implements IAuthServicePort {
-    private final IUserPersistencePort userPersistencePort;
-    private final IEncryptionService encryptionService;
-    private final JwtService jwtService;
 
-    public AuthUseCase(IUserPersistencePort userPersistencePort, IEncryptionService encryptionService, JwtService jwtService) {
-        this.userPersistencePort = userPersistencePort;
-        this.encryptionService = encryptionService;
-        this.jwtService = jwtService;
+    private final IAuthPersistencePort authPersistencePort;
+
+    public AuthUseCase(IAuthPersistencePort authPersistencePort) {
+        this.authPersistencePort = authPersistencePort;
     }
 
     @Override
-    public String authenticate(String userEmail,String userPassword){
+    public String login (String email, String password) {
+        if(!authPersistencePort.validateCredentials(email, password)) {
+            throw new AuthenticationException("invalid credentials");
+        }
 
+        User user = authPersistencePort.authenticate(email, password);
+        return authPersistencePort.generateToken(user);
     }
+
 }

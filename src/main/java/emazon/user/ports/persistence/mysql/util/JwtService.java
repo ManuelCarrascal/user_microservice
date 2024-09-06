@@ -1,4 +1,4 @@
-package emazon.user.infrastructure.configuration.security.jwtconfiguration;
+package emazon.user.ports.persistence.mysql.util;
 
 import emazon.user.ports.persistence.mysql.entity.UserEntity;
 import io.jsonwebtoken.Claims;
@@ -18,7 +18,6 @@ import java.util.Map;
 public class JwtService {
     @Value("${jwt.secret}")
     private String secretKey = "secret";
-
 
     public String generateToken(UserEntity user, Map<String, Object> extraClaims) {
 
