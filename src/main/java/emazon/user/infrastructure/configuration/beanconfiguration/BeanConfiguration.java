@@ -12,6 +12,7 @@ import emazon.user.domain.spi.IUserPersistencePort;
 import emazon.user.domain.api.IEncryptionService;
 import emazon.user.domain.util.UserValidation;
 import emazon.user.infrastructure.configuration.BCryptIEncryptionHandler;
+import emazon.user.ports.persistence.mysql.mapper.IRoleEntityMapper;
 import emazon.user.ports.persistence.mysql.util.JwtService;
 import emazon.user.ports.persistence.mysql.adapter.AuthAdapter;
 import emazon.user.ports.persistence.mysql.adapter.RoleAdapter;
@@ -36,6 +37,7 @@ public class BeanConfiguration {
     private final PasswordEncoder passwordEncoder;
 
 
+
     @Bean
     public IUserPersistencePort userPersistencePort(){
         return new UserAdapter(userRepository, userEntityMapper);
@@ -56,22 +58,22 @@ public class BeanConfiguration {
     }
 
     @Bean
-    public IRolePersistencePort  rolePersistencePort(){
-        return new RoleAdapter(roleRepository);
+    public IRolePersistencePort  rolePersistencePort(IRoleEntityMapper roleEntityMapper){
+        return new RoleAdapter(roleRepository,roleEntityMapper);
     }
 
     @Bean
-    public IRoleServicePort roleServicePort(){
-        return new RoleUseCase(rolePersistencePort());
+    public IRoleServicePort roleServicePort(IRoleEntityMapper roleEntityMapper){
+        return new RoleUseCase(rolePersistencePort(roleEntityMapper));
     }
 
     @Bean
-    public IAuthPersistencePort authPersistencePort(){
-        return new AuthAdapter(userRepository, userEntityMapper, authenticationManager, jwtService, passwordEncoder);
+    public IAuthPersistencePort authPersistencePort(IRolePersistencePort rolePersistencePort){
+        return new AuthAdapter(userRepository, userEntityMapper, authenticationManager, jwtService, passwordEncoder, rolePersistencePort);
     }
     @Bean
-    public IAuthServicePort authServicePort(){
-        return new AuthUseCase(authPersistencePort());
+    public IAuthServicePort authServicePort(IAuthPersistencePort authPersistencePort){
+        return new AuthUseCase(authPersistencePort);
     }
 
 

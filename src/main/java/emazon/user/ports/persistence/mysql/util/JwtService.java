@@ -1,6 +1,6 @@
 package emazon.user.ports.persistence.mysql.util;
 
-import emazon.user.ports.persistence.mysql.entity.UserEntity;
+import emazon.user.domain.model.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Header;
 import io.jsonwebtoken.Jwts;
@@ -19,7 +19,7 @@ public class JwtService {
     @Value("${jwt.secret}")
     private String secretKey = "secret";
 
-    public String generateToken(UserEntity user, Map<String, Object> extraClaims) {
+    public String generateToken(User user, Map<String, Object> extraClaims) {
 
         Date issuedAt = new Date(System.currentTimeMillis());
         Date expiration = new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10);

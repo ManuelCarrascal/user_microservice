@@ -1,7 +1,9 @@
 package emazon.user.ports.persistence.mysql.adapter;
 
+import emazon.user.domain.model.Role;
 import emazon.user.domain.model.User;
 import emazon.user.domain.spi.IAuthPersistencePort;
+import emazon.user.domain.spi.IRolePersistencePort;
 import emazon.user.ports.persistence.mysql.util.JwtService;
 import emazon.user.ports.persistence.mysql.entity.UserEntity;
 import emazon.user.ports.persistence.mysql.mapper.IUserEntityMapper;
@@ -9,7 +11,7 @@ import emazon.user.ports.persistence.mysql.repository.IUserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.HashMap;
@@ -22,27 +24,32 @@ public class AuthAdapter implements IAuthPersistencePort {
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
-
+    private final IRolePersistencePort rolePersistencePort;
 
     @Override
     public User authenticate(String userEmail, String userPassword) {
-        UserEntity userEntity = userRepository.findByUserEmail(userEmail).orElseThrow(()->new UsernameNotFoundException("User not found"));
-        authenticationManager.authenticate(
+        Authentication authUser = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         userEmail,
                         userPassword
                 )
         );
-       return  userEntityMapper.toUser(userEntity);
+
+        UserEntity userEntity = (UserEntity) authUser.getPrincipal();
+        User user = new User();
+        user.setUserId(userEntity.getUserId());
+        user.setUserEmail(userEntity.getUserEmail());
+        user.setRoleId(userEntity.getRole().getRoleId());
+
+
+       return  user;
     }
 
     @Override
     public String generateToken(User user) {
-        UserEntity userEntity = userRepository.findByUserId(user.getUserId()).orElseThrow(()->new UsernameNotFoundException("User not found"));
-        return jwtService.generateToken(userEntity, generateExtraClaims(userEntity));
+
+        return jwtService.generateToken(user, generateExtraClaims(user));
     }
-
-
 
     @Override
     public boolean validateCredentials(String userEmail, String userPassword) {
@@ -54,9 +61,13 @@ public class AuthAdapter implements IAuthPersistencePort {
     }
 
 
-    private Map<String, Object> generateExtraClaims(UserEntity userEntity) {
+    private Map<String, Object> generateExtraClaims(User user) {
         Map<String, Object> extraClaims = new HashMap<>();
-        extraClaims.put("authorities",userEntity.getAuthorities());
+        Role role = rolePersistencePort.getRoleName(user.getRoleId());
+         extraClaims.put("authorities","ROLE_" + role.getRoleName());
         return extraClaims;
     }
+
+
+
 }

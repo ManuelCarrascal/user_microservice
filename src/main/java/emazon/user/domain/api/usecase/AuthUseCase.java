@@ -15,13 +15,14 @@ public class AuthUseCase implements IAuthServicePort {
     }
 
     @Override
-    public String login (String email, String password) {
-        if(!authPersistencePort.validateCredentials(email, password)) {
+    public String login(String email, String password) {
+        if (!authPersistencePort.validateCredentials(email, password)) {
             throw new AuthenticationException("invalid credentials");
         }
 
         User user = authPersistencePort.authenticate(email, password);
         return authPersistencePort.generateToken(user);
     }
+
 
 }
