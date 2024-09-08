@@ -1,10 +1,7 @@
 package emazon.user.ports.persistence.mysql.util;
 
 import emazon.user.domain.model.User;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Header;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,7 +19,7 @@ public class JwtService {
     public String generateToken(User user, Map<String, Object> extraClaims) {
 
         Date issuedAt = new Date(System.currentTimeMillis());
-        Date expiration = new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10);
+        Date expiration = new Date(System.currentTimeMillis() + JwtServiceConstants.TOKEN_EXPIRATION_TIME);
         return Jwts.builder().setClaims(extraClaims)
                 .setSubject(user.getUserId().toString())
                 .setIssuedAt(issuedAt)
@@ -44,5 +41,26 @@ public class JwtService {
     private Claims extractAllClaims(String jwt) {
         return Jwts.parserBuilder().setSigningKey(generateKey()).build()
                 .parseClaimsJws(jwt).getBody();
+    }
+
+    public boolean isTokenValid(String token) {
+        try {
+            Jwts.parserBuilder()
+                    .setSigningKey(generateKey())
+                    .build()
+                    .parseClaimsJws(token);
+            return true;
+        } catch (JwtException | IllegalArgumentException e) {
+            return false;
+        }
+    }
+
+    public boolean isTokenExpired(String token) {
+        try {
+            Date expiration = extractAllClaims(token).getExpiration();
+            return expiration.before(new Date());
+        } catch (ExpiredJwtException e) {
+            return true;
+        }
     }
 }

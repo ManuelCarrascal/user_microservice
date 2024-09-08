@@ -14,6 +14,7 @@ public class UserValidationConstants {
     public static final String AGE_INVALID = "User must be an adult";
     public static final int MINIMUM_AGE = 18;
 
+
     private UserValidationConstants() {
     }
 }

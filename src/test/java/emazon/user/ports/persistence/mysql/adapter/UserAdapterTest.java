@@ -53,4 +53,28 @@ import static org.mockito.Mockito.*;
         assertTrue(exists);
         verify(userRepository).findByUserEmail(email);
     }
+
+     @Test
+     void findByEmail() {
+         String email = "test@example.com";
+         UserEntity userEntity = new UserEntity();
+         when(userRepository.findByUserEmail(email)).thenReturn(Optional.of(userEntity));
+
+         Optional<UserEntity> result = userAdapter.findByEmail(email);
+
+         assertTrue(result.isPresent());
+         assertEquals(userEntity, result.get());
+         verify(userRepository).findByUserEmail(email);
+     }
+
+     @Test
+     void findByEmail_NotFound() {
+         String email = "notfound@example.com";
+         when(userRepository.findByUserEmail(email)).thenReturn(Optional.empty());
+
+         Optional<UserEntity> result = userAdapter.findByEmail(email);
+
+         assertFalse(result.isPresent());
+         verify(userRepository).findByUserEmail(email);
+     }
 }

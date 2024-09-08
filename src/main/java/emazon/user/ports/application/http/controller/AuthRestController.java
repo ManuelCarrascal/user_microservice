@@ -28,9 +28,4 @@ public class AuthRestController {
     return ResponseEntity.ok(response);
 }
 
-    @PostMapping("/validate-token/{token}")
-    public ResponseEntity<String> validateToken(@PathVariable String token) {
-        return ResponseEntity.ok().body(token);
-    }
-
 }
