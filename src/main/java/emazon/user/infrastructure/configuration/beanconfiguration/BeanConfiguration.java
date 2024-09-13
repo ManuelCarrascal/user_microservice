@@ -24,7 +24,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 @RequiredArgsConstructor
@@ -34,7 +33,7 @@ public class BeanConfiguration {
     private final IRoleRepository roleRepository;
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
-    private final PasswordEncoder passwordEncoder;
+
 
 
 
@@ -69,7 +68,7 @@ public class BeanConfiguration {
 
     @Bean
     public IAuthPersistencePort authPersistencePort(IRolePersistencePort rolePersistencePort){
-        return new AuthAdapter(userRepository, userEntityMapper, authenticationManager, jwtService, passwordEncoder, rolePersistencePort);
+        return new AuthAdapter( authenticationManager, jwtService, rolePersistencePort);
     }
     @Bean
     public IAuthServicePort authServicePort(IAuthPersistencePort authPersistencePort){
