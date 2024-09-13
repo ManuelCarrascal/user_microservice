@@ -76,5 +76,11 @@ public class HandlerControllerAdvisor {
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body(Map.of(HandlerControllerAdvisorConstants.MESSAGE_KEY, HandlerControllerAdvisorConstants.ACCESS_DENIED));
     }
+
+    @ExceptionHandler(MissingFieldException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public String handleMissingFieldException(MissingFieldException ex) {
+        return ex.getMessage();
+    }
 }
 

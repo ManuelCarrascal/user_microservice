@@ -1,9 +1,7 @@
 package emazon.user.ports.application.http.controller;
 
-import emazon.user.domain.api.IRoleServicePort;
 import emazon.user.domain.api.IUserServicePort;
 import emazon.user.domain.model.User;
-import emazon.user.domain.util.RoleConstants;
 import emazon.user.ports.application.http.dto.UserRequest;
 import emazon.user.ports.application.http.dto.UserResponse;
 import emazon.user.ports.application.http.mapper.IUserRequestMapper;
@@ -28,15 +26,21 @@ public class UserRestController {
     private final IUserServicePort userServicePort;
     private final IUserRequestMapper userRequestMapper;
     private final IUserResponseMapper userResponseMapper;
-    private final IRoleServicePort roleServicePort;
 
     @PostMapping("/warehouse-asst")
     @PreAuthorize(UserRestControllerConstants.HAS_ROLE_ADMIN)
     @Operation(summary = UserRestControllerConstants.OPERATION_SUMMARY)
     public ResponseEntity<UserResponse> saveWarehouseAsstUser(@RequestBody UserRequest userRequest) {
         User user = userRequestMapper.userRequestToUser(userRequest);
-        user.setRoleId(roleServicePort.getRoleId(RoleConstants.AUX_BODEGA.name()));
         userServicePort.saveWarehouseAsstUser(user);
+        UserResponse userResponse = userResponseMapper.userToUserResponse(user);
+        return ResponseEntity.status(HttpStatus.CREATED).body(userResponse);
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<UserResponse> saveClientUser (@RequestBody UserRequest userRequest) {
+        User user = userRequestMapper.userRequestToUser(userRequest);
+        userServicePort.saveClientUser(user);
         UserResponse userResponse = userResponseMapper.userToUserResponse(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(userResponse);
     }

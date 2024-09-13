@@ -28,4 +28,9 @@ public class UserAdapter implements IUserPersistencePort {
     public Optional<UserEntity> findByEmail(String email) {
         return userRepository.findByUserEmail(email);
     }
+
+    @Override
+    public void saveClientUser(User user) {
+        userRepository.save(userEntityMapper.toEntity(user));
+    }
 }

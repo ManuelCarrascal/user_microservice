@@ -9,4 +9,6 @@ public interface IUserPersistencePort {
     void saveWarehouseAsstUser(User user);
     boolean existsByEmail(String email);
     Optional<UserEntity> findByEmail(String email);
+
+    void saveClientUser(User user);
 }

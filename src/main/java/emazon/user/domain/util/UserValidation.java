@@ -1,9 +1,6 @@
 package emazon.user.domain.util;
 
-import emazon.user.domain.exception.AgeValidationException;
-import emazon.user.domain.exception.EmailValidationException;
-import emazon.user.domain.exception.IdentityDocumentValidationException;
-import emazon.user.domain.exception.PhoneValidationException;
+import emazon.user.domain.exception.*;
 import emazon.user.domain.model.User;
 
 import java.time.LocalDate;
@@ -13,10 +10,23 @@ import java.util.regex.Pattern;
 public class UserValidation {
 
     public void validate(User user){
+        validateRequiredFields(user);
         validateEmail(user.getUserEmail());
         validatePhone(user.getUserPhone());
         validateIdentityDocument(user.getUserIdentityDocument());
         validateAge(user.getUserBirthdate());
+    }
+
+    private void validateRequiredFields(User user) {
+        if (user.getUserName() == null || user.getUserName().trim().isEmpty() ||
+                user.getUserLastName() == null || user.getUserLastName().trim().isEmpty() ||
+                user.getUserIdentityDocument() == null || user.getUserIdentityDocument().trim().isEmpty() ||
+                user.getUserPhone() == null || user.getUserPhone().trim().isEmpty() ||
+                user.getUserEmail() == null || user.getUserEmail().trim().isEmpty() ||
+                user.getUserPassword() == null || user.getUserPassword().trim().isEmpty() ||
+                user.getUserBirthdate() == null) {
+            throw new MissingFieldException(UserValidationConstants.MISSING_FIELD);
+        }
     }
 
     private void validateEmail(String email){
