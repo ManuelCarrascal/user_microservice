@@ -1,6 +1,6 @@
 package emazon.user.ports.application.http.controller;
 
-import emazon.user.infrastructure.configuration.security.AuthenticationService;
+import emazon.user.domain.api.IAuthServicePort;
 import emazon.user.ports.application.http.dto.AuthenticationRequest;
 import emazon.user.ports.application.http.dto.AuthenticationResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,13 +10,14 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.ResponseEntity;
 
-import static org.junit.jupiter.api.Assertions.*;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 class AuthRestControllerTest {
 
     @Mock
-    private AuthenticationService authenticationService;
+    private IAuthServicePort authServicePort;
 
     @InjectMocks
     private AuthRestController authRestController;
@@ -25,16 +26,25 @@ class AuthRestControllerTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
     }
+
     @Test
-    void authenticate_shouldReturnAuthenticationResponse() {
-        AuthenticationRequest request = new AuthenticationRequest("test@example.com", "password123");
-        AuthenticationResponse expectedResponse = new AuthenticationResponse("testToken");
+    void authenticate() {
+        String email = "test@example.com";
+        String password = "password";
+        String token = "mockedToken";
 
-        when(authenticationService.authenticate(request)).thenReturn(expectedResponse);
+        AuthenticationRequest request = new AuthenticationRequest();
+        request.setUserEmail(email);
+        request.setUserPassword(password);
 
-        ResponseEntity<AuthenticationResponse> response = authRestController.authenticate(request);
+        when(authServicePort.login(email, password)).thenReturn(token);
 
-        assertEquals(ResponseEntity.ok(expectedResponse), response);
+        ResponseEntity<AuthenticationResponse> responseEntity = authRestController.authenticate(request);
+
+        AuthenticationResponse expectedResponse = new AuthenticationResponse(token);
+        AuthenticationResponse actualResponse = responseEntity.getBody();
+
+        assert actualResponse != null;
+        assertEquals(expectedResponse.getToken(), actualResponse.getToken());
     }
-
 }

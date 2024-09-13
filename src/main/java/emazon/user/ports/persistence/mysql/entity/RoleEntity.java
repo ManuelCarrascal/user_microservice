@@ -30,4 +30,6 @@ public class RoleEntity  implements Serializable {
 
     @OneToMany(mappedBy = RoleEntityConstants.MAPPED_BY_ROLE, fetch = FetchType.LAZY)
     private List<UserEntity> users;
+
+
 }

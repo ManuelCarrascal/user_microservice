@@ -19,4 +19,5 @@ public interface IUserEntityMapper {
         roleEntity.setRoleId(roleId);
         return roleEntity;
     }
+
 }

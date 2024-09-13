@@ -1,14 +1,20 @@
 package emazon.user.infrastructure.configuration.beanconfiguration;
 
+import emazon.user.domain.api.IAuthServicePort;
 import emazon.user.domain.api.IRoleServicePort;
 import emazon.user.domain.api.IUserServicePort;
+import emazon.user.domain.api.usecase.AuthUseCase;
 import emazon.user.domain.api.usecase.RoleUseCase;
 import emazon.user.domain.api.usecase.UserUseCase;
+import emazon.user.domain.spi.IAuthPersistencePort;
 import emazon.user.domain.spi.IRolePersistencePort;
 import emazon.user.domain.spi.IUserPersistencePort;
 import emazon.user.domain.api.IEncryptionService;
 import emazon.user.domain.util.UserValidation;
-import emazon.user.infrastructure.configuration.BCryptIEncryptionService;
+import emazon.user.infrastructure.configuration.BCryptIEncryptionHandler;
+import emazon.user.ports.persistence.mysql.mapper.IRoleEntityMapper;
+import emazon.user.ports.persistence.mysql.util.JwtService;
+import emazon.user.ports.persistence.mysql.adapter.AuthAdapter;
 import emazon.user.ports.persistence.mysql.adapter.RoleAdapter;
 import emazon.user.ports.persistence.mysql.adapter.UserAdapter;
 import emazon.user.ports.persistence.mysql.mapper.IUserEntityMapper;
@@ -17,6 +23,7 @@ import emazon.user.ports.persistence.mysql.repository.IUserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 
 @Configuration
 @RequiredArgsConstructor
@@ -24,6 +31,11 @@ public class BeanConfiguration {
     private final IUserRepository userRepository;
     private final IUserEntityMapper userEntityMapper;
     private final IRoleRepository roleRepository;
+    private final AuthenticationManager authenticationManager;
+    private final JwtService jwtService;
+
+
+
 
     @Bean
     public IUserPersistencePort userPersistencePort(){
@@ -31,7 +43,7 @@ public class BeanConfiguration {
     }
     @Bean
     public IEncryptionService encryptionService() {
-        return new BCryptIEncryptionService();
+        return new BCryptIEncryptionHandler();
     }
 
     @Bean
@@ -45,14 +57,24 @@ public class BeanConfiguration {
     }
 
     @Bean
-    public IRolePersistencePort  rolePersistencePort(){
-        return new RoleAdapter(roleRepository);
+    public IRolePersistencePort  rolePersistencePort(IRoleEntityMapper roleEntityMapper){
+        return new RoleAdapter(roleRepository,roleEntityMapper);
     }
 
     @Bean
-    public IRoleServicePort roleServicePort(){
-        return new RoleUseCase(rolePersistencePort());
+    public IRoleServicePort roleServicePort(IRoleEntityMapper roleEntityMapper){
+        return new RoleUseCase(rolePersistencePort(roleEntityMapper));
     }
+
+    @Bean
+    public IAuthPersistencePort authPersistencePort(IRolePersistencePort rolePersistencePort){
+        return new AuthAdapter( authenticationManager, jwtService, rolePersistencePort);
+    }
+    @Bean
+    public IAuthServicePort authServicePort(IAuthPersistencePort authPersistencePort){
+        return new AuthUseCase(authPersistencePort);
+    }
+
 
 
 }

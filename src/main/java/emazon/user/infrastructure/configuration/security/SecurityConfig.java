@@ -19,7 +19,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
+
     private final IUserRepository userRepository;
+
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
@@ -36,7 +38,7 @@ public class SecurityConfig {
 
     @Bean
     public UserDetailsService userDetailsService() {
-        return new CustomUserDetailsService(userRepository);
+        return userEmail -> userRepository.findByUserEmail(userEmail).orElseThrow(()-> new RuntimeException("User not found"));
     }
 
     @Bean

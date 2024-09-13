@@ -23,6 +23,7 @@ public class UserUseCase implements IUserServicePort {
         if(userPersistencePort.existsByEmail(user.getUserEmail())) {
             throw new EntityAlreadyExistsException(EntityConstants.USER_ENTITY_NAME);
         }
+
         userValidation.validate(user);
         String encodedPassword = encryptionService.encodePassword(user.getUserPassword());
         user.setUserPassword(encodedPassword);
