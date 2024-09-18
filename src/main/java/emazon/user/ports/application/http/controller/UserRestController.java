@@ -29,7 +29,7 @@ public class UserRestController {
 
     @PostMapping("/warehouse-asst")
     @PreAuthorize(UserRestControllerConstants.HAS_ROLE_ADMIN)
-    @Operation(summary = UserRestControllerConstants.OPERATION_SUMMARY)
+    @Operation(summary = UserRestControllerConstants.OPERATION_SUMMARY_SAVE_WAREHOUSE_ASST)
     public ResponseEntity<UserResponse> saveWarehouseAsstUser(@RequestBody UserRequest userRequest) {
         User user = userRequestMapper.userRequestToUser(userRequest);
         userServicePort.saveWarehouseAsstUser(user);
@@ -38,7 +38,8 @@ public class UserRestController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<UserResponse> saveClientUser (@RequestBody UserRequest userRequest) {
+    @Operation(summary = UserRestControllerConstants.OPERATION_SUMMARY_REGISTER_CLIENT, description = UserRestControllerConstants.OPERATION_DESCRIPTION_REGISTER_CLIENT)
+    public ResponseEntity<UserResponse> saveClientUser(@RequestBody UserRequest userRequest) {
         User user = userRequestMapper.userRequestToUser(userRequest);
         userServicePort.saveClientUser(user);
         UserResponse userResponse = userResponseMapper.userToUserResponse(user);
