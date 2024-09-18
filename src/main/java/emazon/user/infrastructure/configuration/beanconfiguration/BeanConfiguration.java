@@ -34,9 +34,6 @@ public class BeanConfiguration {
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
 
-
-
-
     @Bean
     public IUserPersistencePort userPersistencePort(){
         return new UserAdapter(userRepository, userEntityMapper);
@@ -52,8 +49,8 @@ public class BeanConfiguration {
     }
 
     @Bean
-    public IUserServicePort userServicePort(){
-        return new UserUseCase(userPersistencePort(),userValidation(), encryptionService());
+    public IUserServicePort userServicePort(IRolePersistencePort rolePersistencePort){
+        return new UserUseCase(userPersistencePort(),userValidation(), encryptionService(), rolePersistencePort);
     }
 
     @Bean
