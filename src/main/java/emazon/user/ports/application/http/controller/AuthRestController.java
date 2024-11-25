@@ -11,9 +11,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-
 @RestController
 @RequestMapping("/api/auth")
+@CrossOrigin(origins = "${cors.allowed.origins}")
 @RequiredArgsConstructor
 @Tag(name = AuthRestControllerConstants.TAG_NAME, description = AuthRestControllerConstants.TAG_DESCRIPTION)
 public class AuthRestController {

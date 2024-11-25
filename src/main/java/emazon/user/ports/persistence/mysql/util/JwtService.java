@@ -45,22 +45,14 @@ public class JwtService {
 
     public boolean isTokenValid(String token) {
         try {
-            Jwts.parserBuilder()
-                    .setSigningKey(generateKey())
-                    .build()
-                    .parseClaimsJws(token);
-            return true;
+            Claims claims = extractAllClaims(token);
+            return !isTokenExpired(claims);
         } catch (JwtException | IllegalArgumentException e) {
             return false;
         }
     }
 
-    public boolean isTokenExpired(String token) {
-        try {
-            Date expiration = extractAllClaims(token).getExpiration();
-            return expiration.before(new Date());
-        } catch (ExpiredJwtException e) {
-            return true;
-        }
+    private Boolean isTokenExpired(Claims claims) {
+        return claims.getExpiration().before(new Date());
     }
 }

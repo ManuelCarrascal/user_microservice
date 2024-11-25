@@ -13,14 +13,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/users")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "${cors.allowed.origins}")
 @Tag(name = UserRestControllerConstants.TAG_NAME, description = UserRestControllerConstants.TAG_DESCRIPTION)
 public class UserRestController {
     private final IUserServicePort userServicePort;
@@ -36,7 +34,7 @@ public class UserRestController {
         UserResponse userResponse = userResponseMapper.userToUserResponse(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(userResponse);
     }
-
+    
     @PostMapping("/register")
     @Operation(summary = UserRestControllerConstants.OPERATION_SUMMARY_REGISTER_CLIENT, description = UserRestControllerConstants.OPERATION_DESCRIPTION_REGISTER_CLIENT)
     public ResponseEntity<UserResponse> saveClientUser(@RequestBody UserRequest userRequest) {

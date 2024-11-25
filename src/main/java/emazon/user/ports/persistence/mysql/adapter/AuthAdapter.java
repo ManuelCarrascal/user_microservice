@@ -60,6 +60,7 @@ public class AuthAdapter implements IAuthPersistencePort {
 
     private Map<String, Object> generateExtraClaims(User user) {
         Map<String, Object> extraClaims = new HashMap<>();
+        extraClaims.put("email", user.getUserEmail());
         Role role = rolePersistencePort.getRoleName(user.getRoleId());
         extraClaims.put(AuthAdapterConstants.AUTHORITIES_KEY, AuthAdapterConstants.ROLE_PREFIX + role.getRoleName());
         return extraClaims;
