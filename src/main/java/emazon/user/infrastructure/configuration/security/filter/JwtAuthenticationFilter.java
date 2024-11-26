@@ -4,6 +4,7 @@ import emazon.user.infrastructure.configuration.util.AuthenticationFilterConstan
 import emazon.user.ports.persistence.mysql.util.JwtService;
 import emazon.user.ports.persistence.mysql.entity.UserEntity;
 import emazon.user.ports.persistence.mysql.repository.IUserRepository;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -43,6 +44,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     .orElseThrow(() -> new RuntimeException(AuthenticationFilterConstants.USER_NOT_FOUND));
             UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(username, null, user.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authToken);
+
+        } catch (ExpiredJwtException e) {
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token has expired");
+            return;
         } catch (Exception e) {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, AuthenticationFilterConstants.INVALID_TOKEN);
             return;
